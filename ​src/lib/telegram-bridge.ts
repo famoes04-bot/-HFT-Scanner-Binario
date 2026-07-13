@@ -69,7 +69,7 @@ async function processarSinalTexto(texto: string) {
                                   `🤖 _Enviado via SMC Ultra Scanner_`;
 
         // ID do chat para onde o bot vai mandar (pode ser o seu ID ou o ID de um canal que o bot seja Admin)
-        const SEU_CHAT_ID = "SEU_CHAT_ID_PESSOAL"; 
+        const SEU_CHAT_ID = "1977840567"; 
 
         await fetch(`https://api.telegram.org/bot${MY_BOT_TOKEN}/sendMessage`, {
           method: "POST",
