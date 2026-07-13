@@ -1,0 +1,17 @@
+{
+  "name": "hft-scanner-binario",
+  "version": "1.0.0",
+  "description": "Ponte do Telegram para Sinais HFT",
+  "main": "dist/lib/telegram-bridge.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/lib/telegram-bridge.js"
+  },
+  "dependencies": {
+    "telegram": "^2.22.2",
+    "input": "^1.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
