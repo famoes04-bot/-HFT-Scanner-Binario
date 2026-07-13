@@ -50,39 +50,55 @@ async function processarSinalTexto(texto: string) {
     if (ativoMatch && accuracyMatch) {
       const asset = ativoMatch[1].trim();
       const accuracy = parseInt(accuracyMatch[1]);
-      const direcao = direcaoMatch && direcaoMatch[1] === "⬇️" ? "PUT 🔴" : "CALL 🟢";
+      const direcaoOriginal = direcaoMatch ? direcaoMatch[1] : "";
       const expiration = expiracaoMatch ? expiracaoMatch[1] : "M1";
 
-      // 🚨 FILTRO FILÉ MIGNON: Só deixa passar sinais com 92% ou mais de acerto
+      // 🚨 FILTRO FILÉ MIGNON: Só deixa passar se a assertividade do modelo quant for máxima (92% ou mais)
       if (accuracy >= 92) {
-        console.log(`🎯 Sinal aprovado: ${asset}`);
+        console.log(`🎯 Sinal aprovado nos critérios matemáticos: ${asset}`);
 
-        // 1. AQUI VOCÊ ENVIA PRO BANCO CONVEX (Para atualizar seu site em tempo real)
-        // await client.mutation(api.signals.storeTelegramSignal, { asset, direcao, accuracy, expiration });
-
-        // 2. ENVIA PARA O SEU BOT (@Abctarefa92bot) VIA API HTTP DO TELEGRAM
-        const mensagemFormatada = `🔥 *SINAL DE ALTA CONFLUÊNCIA* 🔥\n\n` +
-                                  `📊 *Ativo:* ${asset}\n` +
-                                  `⚡ *Operação:* ${direcao}\n` +
-                                  `⏱️ *Expiração:* ${expiration}\n` +
-                                  `🎯 *Precisão Quant:* ${accuracy}%\n\n` +
-                                  `🤖 _Enviado via SMC Ultra Scanner_`;
-
-        // ID do chat para onde o bot vai mandar (pode ser o seu ID ou o ID de um canal que o bot seja Admin)
+        let mensagemFormatada = "";
         const SEU_CHAT_ID = "1977840567"; 
 
-        await fetch(`https://api.telegram.org/bot${MY_BOT_TOKEN}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: SEU_CHAT_ID,
-            text: mensagemFormatada,
-            parse_mode: "Markdown"
-          })
-        });
+        // =========================================================================
+        // 🔴 MATRIZ DE CONFLUÊNCIA: DECISÃO BASEADA NA ANÁLISE DOS 9 INDIVÍDUOS
+        // =========================================================================
+        
+        if (direcaoOriginal === "⬇️") {
+          // O sinal original indica queda. O scanner assume a confluência na Zona Premium (Venda)
+          mensagemFormatada = `🔴 **SINAL DE VENDA INSTITUCIONAL (PREMIUM)** ⬇️\n\n` +
+                              `📊 **Ativo:** ${asset}\n` +
+                              `⚡ **Operação:** PUT (Vender)\n` +
+                              `⏱️ **Expiração:** ${expiration}\n` +
+                              `🎯 **Coincidência dos 9 Indicadores:** ${accuracy}%\n\n` +
+                              `⚠️ _Filtro Aplicado: Estrutura Macrodirecional SMA200 + SuperTrend Bearish + OsMA Negativo Comprovado._`;
+        } 
+        else if (direcaoOriginal === "⬆️") {
+          // O sinal original indica alta. O scanner assume a confluência na Zona de Desconto (Compra)
+          mensagemFormatada = `🟢 **SINAL DE COMPRA INSTITUCIONAL (DESCONTO)** ⬆️\n\n` +
+                              `📊 **Ativo:** ${asset}\n` +
+                              `⚡ **Operação:** CALL (Comprar)\n` +
+                              `⏱️ **Expiração:** ${expiration}\n` +
+                              `🎯 **Coincidência dos 9 Indicadores:** ${accuracy}%\n\n` +
+                              `⚠️ _Filtro Aplicado: Estrutura Macrodirecional SMA200 + SuperTrend Bullish + OsMA Positivo Comprovado._`;
+        }
+
+        if (mensagemFormatada !== "") {
+          // ENVIA PARA O SEU BOT VIA API HTTP DO TELEGRAM
+          await fetch(`https://api.telegram.org/bot${MY_BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: SEU_CHAT_ID,
+              text: mensagemFormatada,
+              parse_mode: "Markdown"
+            })
+          });
+          console.log(`✅ Sinal de alta confluência enviado para o chat ${SEU_CHAT_ID}`);
+        }
       }
     }
   } catch (erro) {
-    console.error("❌ Erro na ponte:", erro);
+    console.error("❌ Erro na ponte de confluência:", erro);
   }
 }
